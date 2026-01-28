@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading Inventory | CTM IT</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Green-Blue Color Palette */
+            --primary-blue: #2563eb;
+            --primary-green: #10b981;
+            --secondary-blue: #3b82f6;
+            --secondary-green: #34d399;
+            --accent-teal: #06b6d4;
+            --dark-bg: #0f172a;
+            --surface: #1e293b;
+            --surface-light: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            
+            /* Gradients */
+            --gradient-primary: linear-gradient(135deg, var(--primary-green), var(--primary-blue));
+            --gradient-secondary: linear-gradient(135deg, var(--secondary-green), var(--secondary-blue));
+            --gradient-dark: linear-gradient(135deg, var(--dark-bg), var(--surface));
+            
+            /* Shadows */
+            --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.3);
+            --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            --glow-blue: 0 0 30px rgba(37, 99, 235, 0.3);
+            --glow-green: 0 0 30px rgba(16, 185, 129, 0.3);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            padding: 20px;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.15;
+        }
+
+        .bg-circle {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            animation: float 20s infinite linear;
+        }
+
+        .bg-circle.green {
+            background: linear-gradient(135deg, var(--primary-green), transparent);
+            width: 300px;
+            height: 300px;
+            top: 10%;
+            left: 5%;
+            animation-delay: 0s;
+        }
+
+        .bg-circle.blue {
+            background: linear-gradient(135deg, var(--primary-blue), transparent);
+            width: 400px;
+            height: 400px;
+            bottom: 10%;
+            right: 5%;
+            animation-delay: -10s;
+        }
+
+        .bg-circle.teal {
+            background: linear-gradient(135deg, var(--accent-teal), transparent);
+            width: 250px;
+            height: 250px;
+            top: 50%;
+            left: 70%;
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            25% {
+                transform: translate(40px, -40px) scale(1.1);
+            }
+            50% {
+                transform: translate(-20px, 20px) scale(0.9);
+            }
+            75% {
+                transform: translate(-40px, -20px) scale(1.05);
+            }
+        }
+
+        /* Main Container */
+        .loading-container {
+            width: 100%;
+            max-width: 800px;
+            padding: 2rem;
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: var(--shadow-xl);
+            position: relative;
+            overflow: hidden;
+            animation: containerAppear 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes containerAppear {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .loading-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-primary);
+            animation: progressLine 2s ease-in-out infinite;
+        }
+
+        @keyframes progressLine {
+            0%, 100% {
+                width: 0%;
+                left: 0;
+            }
+            50% {
+                width: 100%;
+                left: 0;
+            }
+            100% {
+                width: 0%;
+                left: 100%;
+            }
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: var(--glow-green), var(--glow-blue);
+            animation: logoPulse 3s infinite;
+        }
+
+        @keyframes logoPulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: var(--glow-green), var(--glow-blue);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 40px rgba(16, 185, 129, 0.4), 0 0 40px rgba(37, 99, 235, 0.4);
+            }
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-green), var(--primary-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--primary-green), var(--primary-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            display: inline-block;
+        }
+
+        .title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--gradient-primary);
+            border-radius: 2px;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-top: 1.5rem;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        /* Loading Animation */
+        .loader-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .loader-wrapper {
+            position: relative;
+            width: 120px;
+            height: 120px;
+        }
+
+        .main-loader {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(
+                transparent, 
+                var(--primary-green), 
+                var(--primary-blue), 
+                var(--accent-teal), 
+                transparent
+            );
+            animation: rotate 1.5s linear infinite;
+            position: relative;
+        }
+
+        .main-loader::before {
+            content: '';
+            position: absolute;
+            inset: 8px;
+            background: var(--surface);
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .loader-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: var(--glow-green), var(--glow-blue);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.1);
+            }
+        }
+
+        .loading-text {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-top: 1rem;
+        }
+
+        .loading-dots {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .dot:nth-child(1) { 
+            animation-delay: -0.32s;
+            background: var(--primary-green);
+        }
+        .dot:nth-child(2) { 
+            animation-delay: -0.16s;
+            background: var(--accent-teal);
+        }
+        .dot:nth-child(3) { 
+            animation-delay: 0s;
+            background: var(--primary-blue);
+        }
+
+        @keyframes bounce {
+            0%, 80%, 100% { 
+                transform: scale(0);
+                opacity: 0.5;
+            }
+            40% { 
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Progress Section */
+        .progress-section {
+            width: 100%;
+            max-width: 500px;
+            margin: 2rem auto 0;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .progress-container {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--gradient-primary);
+            border-radius: 4px;
+            animation: progressAnimation 4s ease-in-out forwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.4), 
+                transparent
+            );
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes progressAnimation {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Loading Steps */
+        .loading-steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 2.5rem;
+        }
+
+        .step {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.25rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            animation: stepAppear 0.6s ease;
+            animation-fill-mode: both;
+        }
+
+        .step:nth-child(1) { animation-delay: 0.2s; }
+        .step:nth-child(2) { animation-delay: 0.4s; }
+        .step:nth-child(3) { animation-delay: 0.6s; }
+
+        @keyframes stepAppear {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .step-icon {
+            width: 36px;
+            height: 36px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-green);
+            font-size: 16px;
+        }
+
+        .step-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        .step-status {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .step.active .step-icon {
+            background: var(--gradient-primary);
+            color: white;
+            animation: iconPulse 1.5s infinite;
+        }
+
+        .step.completed .step-icon {
+            background: var(--primary-green);
+            color: white;
+        }
+
+        .step.completed .step-status {
+            color: var(--primary-green);
+        }
+
+        @keyframes iconPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Countdown Timer */
+        .countdown {
+            text-align: center;
+            margin-top: 2rem;
+            padding: 1rem;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .countdown-text {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .countdown-timer {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-green), var(--primary-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .redirect-hint {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(37, 99, 235, 0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin-top: 1rem;
+            animation: hintPulse 2s infinite;
+        }
+
+        @keyframes hintPulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        /* Responsive Design for Mobile */
+        @media (max-width: 768px) {
+            .loading-container {
+                padding: 1.5rem;
+                border-radius: 20px;
+                margin: 10px;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+                padding: 0 10px;
+            }
+            
+            .loader-wrapper {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .loader-center {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+            
+            .loading-steps {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+            
+            .step {
+                padding: 1rem;
+            }
+            
+            .bg-circle {
+                display: none;
+            }
+            
+            .logo-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+            }
+            
+            .logo-text {
+                font-size: 1.3rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .loading-container {
+                padding: 1rem;
+            }
+            
+            .title {
+                font-size: 1.8rem;
+            }
+            
+            .logo {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .logo-text {
+                font-size: 1.2rem;
+            }
+            
+            .loader-section {
+                gap: 1.5rem;
+            }
+            
+            .countdown-timer {
+                font-size: 1.3rem;
+            }
+            
+            .footer {
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Desktop Specific Styles */
+        @media (min-width: 1024px) {
+            .loading-container {
+                padding: 3rem;
+            }
+            
+            .title {
+                font-size: 3rem;
+            }
+            
+            .subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .loader-wrapper {
+                width: 140px;
+                height: 140px;
+            }
+            
+            .loader-center {
+                width: 70px;
+                height: 70px;
+                font-size: 28px;
+            }
+            
+            .loading-steps {
+                gap: 1.5rem;
+            }
+            
+            .step {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Tablet Styles */
+        @media (min-width: 769px) and (max-width: 1023px) {
+            .loading-container {
+                max-width: 700px;
+                padding: 2rem;
+            }
+            
+            .title {
+                font-size: 2.2rem;
+            }
+            
+            .loading-steps {
+                gap: 1rem;
+            }
+        }
+
+        /* Loading Complete Animation */
+        .loading-complete {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-complete.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .complete-content {
+            text-align: center;
+            animation: completeAppear 0.5s ease;
+        }
+
+        @keyframes completeAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .complete-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin: 0 auto 1.5rem;
+            box-shadow: var(--glow-green), var(--glow-blue);
+            animation: completePulse 1s infinite;
+        }
+
+        @keyframes completePulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .complete-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--primary-green), var(--primary-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .redirect-text {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        /* Skip Button */
+        .skip-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            backdrop-filter: blur(10px);
+        }
+
+        .skip-btn:hover {
+            background: rgba(37, 99, 235, 0.2);
+            color: var(--text-primary);
+            transform: translateY(-2px);
+        }
+
+        /* Progress Indicator */
+        .progress-indicator {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 4px;
+        }
+
+        .progress-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .progress-dot.active {
+            background: var(--primary-green);
+            transform: scale(1.2);
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip Button -->
+    <button class="skip-btn" id="skipBtn">
+        <i class="fas fa-forward"></i>
+        Skip Loading
+    </button>
+
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <div class="bg-circle green"></div>
+        <div class="bg-circle blue"></div>
+        <div class="bg-circle teal"></div>
+    </div>
+
+    <!-- Main Loading Container -->
+    <div class="loading-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-boxes-stacked"></i>
+                </div>
+                <div class="logo-text">CTM IT INVENTORY</div>
+            </div>
+            <h1 class="title">LOADING INVENTORY</h1>
+            <p class="subtitle">
+                Initializing asset management system. Loading hardware inventory, 
+                software licenses, and network configurations...
+            </p>
+        </div>
+
+        <!-- Loading Animation -->
+        <div class="loader-section">
+            <div class="loader-wrapper">
+                <div class="main-loader"></div>
+                <div class="loader-center">
+                    <i class="fas fa-database"></i>
+                </div>
+            </div>
+            
+            <div class="loading-text">
+                Connecting to Database
+                <div class="loading-dots">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-section">
+            <div class="progress-header">
+                <span>System Initialization</span>
+                <span id="progressPercentage">0%</span>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+        </div>
+
+        <!-- Loading Steps -->
+        <div class="loading-steps">
+            <div class="step active" id="step1">
+                <div class="step-header">
+                    <div class="step-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <div class="step-title">Database</div>
+                </div>
+                <div class="step-status" id="step1Status">Connecting...</div>
+            </div>
+            
+            <div class="step" id="step2">
+                <div class="step-header">
+                    <div class="step-icon">
+                        <i class="fas fa-server"></i>
+                    </div>
+                    <div class="step-title">Assets</div>
+                </div>
+                <div class="step-status" id="step2Status">Pending</div>
+            </div>
+            
+            <div class="step" id="step3">
+                <div class="step-header">
+                    <div class="step-icon">
+                        <i class="fas fa-network-wired"></i>
+                    </div>
+                    <div class="step-title">Network</div>
+                </div>
+                <div class="step-status" id="step3Status">Pending</div>
+            </div>
+        </div>
+
+        <!-- Countdown Timer -->
+        <div class="countdown">
+            <div class="countdown-text">Redirecting to Dashboard in</div>
+            <div class="countdown-timer" id="countdownTimer">5</div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Enterprise Asset Management System v2.1</p>
+            <div class="redirect-hint" id="redirectHint">
+                <i class="fas fa-rocket"></i>
+                <span>Preparing dashboard interface...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Complete Overlay -->
+    <div class="loading-complete" id="loadingComplete">
+        <div class="complete-content">
+            <div class="complete-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            <div class="complete-text">Inventory Loaded Successfully!</div>
+            <div class="redirect-text">Redirecting to Dashboard...</div>
+        </div>
+    </div>
+
+    <!-- Progress Indicator -->
+    <div class="progress-indicator">
+        <div class="progress-dot active" id="dot1"></div>
+        <div class="progress-dot" id="dot2"></div>
+        <div class="progress-dot" id="dot3"></div>
+        <div class="progress-dot" id="dot4"></div>
+        <div class="progress-dot" id="dot5"></div>
+    </div>
+
+    <script>
+        // Configuration
+        const LOAD_TIME = 5000; // 5 seconds
+        let timeLeft = 5;
+        let progress = 0;
+        let currentStep = 0;
+        let redirectTimer = null;
+
+        // DOM Elements
+        const progressBar = document.getElementById('progressBar');
+        const progressPercentage = document.getElementById('progressPercentage');
+        const countdownTimer = document.getElementById('countdownTimer');
+        const skipBtn = document.getElementById('skipBtn');
+        const loadingComplete = document.getElementById('loadingComplete');
+        const redirectHint = document.getElementById('redirectHint');
+
+        // Step elements
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const step3 = document.getElementById('step3');
+        const step1Status = document.getElementById('step1Status');
+        const step2Status = document.getElementById('step2Status');
+        const step3Status = document.getElementById('step3Status');
+
+        // Progress dots
+        const dots = [
+            document.getElementById('dot1'),
+            document.getElementById('dot2'),
+            document.getElementById('dot3'),
+            document.getElementById('dot4'),
+            document.getElementById('dot5')
+        ];
+
+        // Initialize loading
+        function initLoading() {
+            // Start progress animation
+            const progressInterval = setInterval(() => {
+                progress += 0.5;
+                if (progress > 100) progress = 100;
+                
+                progressBar.style.width = progress + '%';
+                progressPercentage.textContent = Math.floor(progress) + '%';
+                
+                // Update progress dots
+                const activeDotIndex = Math.floor(progress / 20);
+                dots.forEach((dot, index) => {
+                    if (index <= activeDotIndex) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+                
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                }
+            }, LOAD_TIME / 200); // Update every 25ms for smooth animation
+
+            // Update loading steps
+            const stepInterval = setInterval(() => {
+                currentStep++;
+                
+                switch(currentStep) {
+                    case 1:
+                        step1.classList.add('active');
+                        step1Status.textContent = 'Connected ✓';
+                        step2.classList.add('active');
+                        step2Status.textContent = 'Loading...';
+                        break;
+                    case 2:
+                        step2.classList.add('completed');
+                        step2Status.textContent = 'Loaded ✓';
+                        step3.classList.add('active');
+                        step3Status.textContent = 'Scanning...';
+                        break;
+                    case 3:
+                        step3.classList.add('completed');
+                        step3Status.textContent = 'Mapped ✓';
+                        clearInterval(stepInterval);
+                        break;
+                }
+            }, 1500);
+
+            // Start countdown
+            redirectTimer = setInterval(() => {
+                timeLeft--;
+                countdownTimer.textContent = timeLeft;
+                
+                // Update hint based on time left
+                if (timeLeft === 3) {
+                    redirectHint.innerHTML = '<i class="fas fa-bolt"></i><span>Finalizing system checks...</span>';
+                } else if (timeLeft === 2) {
+                    redirectHint.innerHTML = '<i class="fas fa-chart-line"></i><span>Preparing analytics...</span>';
+                } else if (timeLeft === 1) {
+                    redirectHint.innerHTML = '<i class="fas fa-tachometer-alt"></i><span>Launching dashboard...</span>';
+                }
+                
+                if (timeLeft <= 0) {
+                    completeLoading();
+                }
+            }, 1000);
+        }
+
+        // Complete loading and redirect
+        function completeLoading() {
+            clearInterval(redirectTimer);
+            
+            // Show completion animation
+            loadingComplete.classList.add('active');
+            
+            // Redirect after 1 second
+            setTimeout(() => {
+                window.location.href = 'main\Dashboard.html';
+            }, 1000);
+        }
+
+        // Skip loading
+        function skipLoading() {
+            clearInterval(redirectTimer);
+            
+            // Fast forward progress
+            progress = 100;
+            progressBar.style.width = '100%';
+            progressPercentage.textContent = '100%';
+            
+            // Mark all steps as completed
+            step1.classList.add('completed');
+            step2.classList.add('completed');
+            step3.classList.add('completed');
+            step1Status.textContent = 'Connected ✓';
+            step2Status.textContent = 'Loaded ✓';
+            step3Status.textContent = 'Mapped ✓';
+            
+            // Activate all dots
+            dots.forEach(dot => dot.classList.add('active'));
+            
+            // Complete loading immediately
+            completeLoading();
+        }
+
+        // Handle mobile/desktop differences
+        function handleDeviceSpecifics() {
+            const isMobile = window.innerWidth <= 768;
+            
+            if (isMobile) {
+                // Mobile optimizations
+                document.body.style.padding = '10px';
+                skipBtn.style.top = '10px';
+                skipBtn.style.right = '10px';
+                skipBtn.style.fontSize = '0.8rem';
+                skipBtn.style.padding = '6px 12px';
+                
+                // Update hint for mobile
+                redirectHint.innerHTML = '<i class="fas fa-mobile-alt"></i><span>Optimizing for mobile...</span>';
+            } else {
+                // Desktop optimizations
+                redirectHint.innerHTML = '<i class="fas fa-desktop"></i><span>Optimizing for desktop...</span>';
+            }
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize loading
+            initLoading();
+            
+            // Handle device specifics
+            handleDeviceSpecifics();
+            
+            // Add event listeners
+            skipBtn.addEventListener('click', skipLoading);
+            
+            // Handle window resize
+            window.addEventListener('resize', handleDeviceSpecifics);
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' || e.key === ' ') {
+                    skipLoading();
+                }
+                
+                if (e.key === 'r' || e.key === 'R') {
+                    location.reload();
+                }
+            });
+            
+            // Touch support for mobile
+            let touchStartY = 0;
+            document.addEventListener('touchstart', function(e) {
+                touchStartY = e.touches[0].clientY;
+            });
+            
+            document.addEventListener('touchend', function(e) {
+                const touchEndY = e.changedTouches[0].clientY;
+                const swipeDistance = touchStartY - touchEndY;
+                
+                // Swipe up to skip
+                if (swipeDistance > 100) {
+                    skipLoading();
+                }
+            });
+        });
+
+        // Handle page visibility
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                // Page is hidden, pause animations
+                document.querySelectorAll('*').forEach(el => {
+                    const style = window.getComputedStyle(el);
+                    const animation = style.animationName;
+                    if (animation !== 'none') {
+                        el.style.animationPlayState = 'paused';
+                    }
+                });
+            } else {
+                // Page is visible, resume animations
+                document.querySelectorAll('*').forEach(el => {
+                    el.style.animationPlayState = 'running';
+                });
+            }
+        });
+    </script>
+</body>
+</html>
